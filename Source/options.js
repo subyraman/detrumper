@@ -9,17 +9,24 @@ function splitTrim(string, delim) {
     return split;
 }
 
-document.getElementById("checkDaily").onclick = setOptions;
-document.getElementById("checkDaily").checked = start ? startingOptions.checkDaily : false;
+//document.getElementById('replacement-text').onkeyup = setOptions;
+document.getElementById("replacement-text").value = (start ? startingOptions.replacementText : 'Cutie Toupeepants');
 
-document.getElementById('excluded').onkeyup = setOptions;
+//document.getElementById('excluded').onkeyup = setOptions;
 document.getElementById('excluded').value = (start ? startingOptions.excluded : []).join(', ');
+
+document.getElementById('save').onclick = setOptions;
 
 function setOptions() {
     var options = {
-        checkDaily: document.getElementById("checkDaily").checked,
+        replacementText: document.getElementById("replacement-text").value,
         excluded: splitTrim(document.getElementById('excluded').value, ',')
     };
+
     localStorage['options'] = JSON.stringify(options);
     chrome.extension.sendRequest({name: "setOptions", options: JSON.stringify(options)});
+
+    chrome.tabs.getCurrent(function(tab) {
+        chrome.tabs.remove(tab.id, function() { });
+    });
 }

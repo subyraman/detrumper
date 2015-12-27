@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
-	"name": "Downworthy",
+	"name": "De-Trumper",
 	"version": "0.0.8",
-	"description": "Replaces hyberbolic headlines from bombastic viral websites with a slightly more realistic version.",
+	"description": "Replaces mentions of Donald Trump with the text of your choosing.",
 	"permissions": [
 	  "storage"
 	],
@@ -31,7 +31,7 @@
     "browser_action": 
     {
     	"default_icon":  "images/icon19-on.png",
-		"default_title": "Toggle Downworthy"
+		"default_title": "Toggle De-Trumper"
 	},
   "content_security_policy": "default-src 'none'; script-src 'self'",
   "options_page": "options.html"

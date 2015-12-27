@@ -5,6 +5,7 @@
     var KEY_LAST_CHANGED_AT = 'lastChangedAt';
     var KEY_OPTIONS = 'options';
     var KEY_PAUSED = 'paused';
+    var KEY_REPLACEMENT_TEXT = 'replacementText'
 
     var _alreadyQueued = false;
 
@@ -12,32 +13,6 @@
         return new Date().getTime();
     }
 
-    function checkForRandomSwap() {
-        var lastChangedAt, pollTimeout;
-        var options = JSON.parse(localStorage.getItem(KEY_OPTIONS));
-
-        if(options && options.checkDaily) {
-            lastChangedAt = parseInt(localStorage.getItem(KEY_LAST_CHANGED_AT), 10);
-
-            // If it's never been changed, or if it's been over a day since it was changed...
-            if(isNaN(lastChangedAt) || lastChangedAt + ONE_DAY < now()) {
-                var pause = Math.random() > 0.5; // Flip a coin!
-                lastChangedAt = setPaused(pause);
-            }
-
-            // Set up the next check.
-            if(!_alreadyQueued) {
-                pollTimeout = (lastChangedAt + ONE_DAY) - now();
-
-                setTimeout(function() {
-                    _alreadyQueued = false;
-                    checkForRandomSwap();
-                }, pollTimeout);
-                
-                _alreadyQueued = true;
-            }
-        }
-    }
 
     function updateBadge(paused) {
         var badgeText = paused ? "OFF" : "";
@@ -71,6 +46,13 @@
         return opts ? opts['excluded'] : [];
     }
 
+    function getReplacementText() {
+        var defaultText = "Cutie Toupeepants"
+        var opts = JSON.parse(localStorage.getItem(KEY_OPTIONS));
+
+        return opts ? opts['replacementText'] : defaultText;
+    }
+
     function onMessage(request, sender, sendResponse) {
         var requestId = request.id;
 
@@ -84,8 +66,8 @@
         else if(requestId == 'setOptions') {
             localStorage.setItem(KEY_OPTIONS, request.options);
         }
-        else if(requestId == 'getDictionary') {
-            sendResponse(dictionary);
+        else if(requestId == 'getReplacementText') {
+            sendResponse(getReplacementText());
         }
     }
 
@@ -96,7 +78,5 @@
     // TODO: The option value would then be passed into loadDictionary for appropriate dictionary file selection.
 
     updateBadge(isPaused());
-
-    checkForRandomSwap();
 
 })();

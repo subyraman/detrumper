@@ -1,48 +1,23 @@
 (function() {
 	var _self = this;
-	var _dictionary;
+	var _replacementText;
 
-	function getDictionary(callback) {
-		chrome.extension.sendRequest({id: "getDictionary"}, function(response) {
-			_dictionary = response; // Store the dictionary for later use.
+	function getReplacementText(callback) {
+		chrome.extension.sendRequest({id: "getReplacementText"}, function(response) {
+			_replacementText = response;
 			callback.apply(_self, arguments);
 		});
 	}
 
 	function handleText(textNode) {
-		var replacements = _dictionary.replacements;
-    var expressions = _dictionary.expressions;
 		var v = textNode.nodeValue;
 		var matchFound = false;
 
-		var regex, original;
+		var trumpRegex = /Donald J\.? Trump|Donald Trump|Trump/
 
-		//text replacements
-		for(original in replacements) {
-			original_escaped = original;
-
-			regex_for_question_mark = /\?/g
-			regex_for_period = /\./g
-
-			original_escaped = original_escaped.replace(regex_for_question_mark, "\\?");
-			original_escaped = original_escaped.replace(regex_for_period, "\\.");
-		    
-			regex = new RegExp('\\b' + original_escaped + '\\b', "gi");
-			if (v.match(regex)) {
-				v = v.replace(regex, replacements[original]);	
-				matchFound = true;
-			}
-			
-		}
-        
-		// regex replacements
-		for(original in expressions) {
-			regex = new RegExp(original, "g");
-			if (v.match(regex)) {
-				v = v.replace(regex, expressions[original]);
-				matchFound = true;	
-			}
-			
+		if (trumpRegex.test(v)) {
+			v = v.replace(trumpRegex, _replacementText);
+			matchFound = true;
 		}
 		
 		// Only change the node if there was any actual text change
@@ -107,22 +82,21 @@
 
 		// If the extension is paused, no need to try to call getExcluded
 		if(isPaused) {
-        return;
-    }
+	        return;
+	    }
     
-    chrome.extension.sendRequest({id: 'getExcluded'}, function (r2) {
-        
-        var ex = r2.value;
-        for (x in ex) { 
-            if (window.location.href.indexOf(ex[x]) != -1) {
-                return;
-            }
-        }
+	    chrome.extension.sendRequest({id: 'getExcluded'}, function (r2) {
+	        var ex = r2.value;
+	        for (x in ex) { 
+	            if (ex[x] && window.location.href.indexOf(ex[x]) != -1) {
+	                return;
+	            }
+	        }
 
-        getDictionary(function() {
-            work();
-        });
-    });
+	    	getReplacementText(function() {
+	    		work();
+	    	})
+	    });
 
 	});
 
