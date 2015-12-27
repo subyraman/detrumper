@@ -9,17 +9,13 @@ function splitTrim(string, delim) {
     return split;
 }
 
-//document.getElementById('replacement-text').onkeyup = setOptions;
 document.getElementById("replacement-text").value = (start ? startingOptions.replacementText : 'Cutie Toupeepants');
-
-//document.getElementById('excluded').onkeyup = setOptions;
 document.getElementById('excluded').value = (start ? startingOptions.excluded : []).join(', ');
-
 document.getElementById('save').onclick = setOptions;
 
 function setOptions() {
     var options = {
-        replacementText: document.getElementById("replacement-text").value,
+        replacementText: document.getElementById("replacement-text").value || 'Cutie Toupeepants',
         excluded: splitTrim(document.getElementById('excluded').value, ',')
     };
 

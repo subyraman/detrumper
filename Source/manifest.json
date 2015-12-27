@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "De-Trumper",
-	"version": "0.0.8",
+	"version": "0.0.1",
 	"description": "Replaces mentions of Donald Trump with the text of your choosing.",
 	"permissions": [
 	  "storage"
